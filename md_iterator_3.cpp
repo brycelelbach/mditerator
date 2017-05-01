@@ -10,13 +10,13 @@
 #include <iterator>
 #include <iostream>
 
-#if (  defined(FILL_PI_INDEX_GENERATOR)                                        \
+#if (  defined(MEMSET_INDEX_GENERATOR)                                        \
     || defined(STREAM_TRIAD_INDEX_GENERATOR))                                  \
  && !defined(INDEX_GENERATOR)
     #define INDEX_GENERATOR
 #endif
 
-#if (  defined(FILL_PI_INDEX_ITERATOR)                                        \
+#if (  defined(MEMSET_INDEX_ITERATOR)                                        \
     || defined(STREAM_TRIAD_INDEX_ITERATOR))                                  \
  && !defined(INDEX_ITERATOR)
     #define INDEX_ITERATOR
@@ -546,7 +546,7 @@ struct index_2d_iterator
         index_type d
         ) noexcept
     {
-        #warning Optimize me!
+//        #warning Optimize me!
         for (index_type x = 0; x != d; ++x)
             ++(*this);
 
@@ -622,8 +622,8 @@ struct index_2d_iterator_sentinel_range
 };
 #endif
 
-#if defined(FILL_PI_INDEX_GENERATOR)
-void fill_pi_generator_NN(
+#if defined(MEMSET_INDEX_GENERATOR)
+void memset_generator_NN(
     std::ptrdiff_t N
   , std::vector<double>& vA
     )
@@ -635,10 +635,10 @@ void fill_pi_generator_NN(
 
     BOOST_DEMAND_VECTORIZATION
     for (auto pos : index_2d_generator::generate(N, N))
-        A[pos.i + pos.j * N] = 3.14F;
+        A[pos.i + pos.j * N] = 0.0F;
 }
 
-void fill_pi_generator_NM(
+void memset_generator_NM(
     std::ptrdiff_t N
   , std::ptrdiff_t M
   , std::vector<double>& vA
@@ -652,7 +652,7 @@ void fill_pi_generator_NM(
 
     BOOST_DEMAND_VECTORIZATION
     for (auto pos : index_2d_generator::generate(N, M))
-        A[pos.i + pos.j * N] = 3.14F;
+        A[pos.i + pos.j * N] = 0.0F;
 }
 #endif
 
@@ -680,8 +680,8 @@ void stream_triad(
 }
 #endif
 
-#if defined(FILL_PI_INDEX_ITERATOR)
-void fill_pi_index_iterator_sentinel_range_NN(
+#if defined(MEMSET_INDEX_ITERATOR)
+void memset_index_iterator_sentinel_range_NN(
     std::ptrdiff_t N
   , std::vector<double>& vA
     )
@@ -699,11 +699,11 @@ void fill_pi_index_iterator_sentinel_range_NN(
     for (; first != last; ++first)
     {
         auto pos = *first;
-        A[pos.i + pos.j * N] = 3.14F;
+        A[pos.i + pos.j * N] = 0.0F;
     }
 }
 
-void fill_pi_index_iterator_sentinel_range_NM(
+void memset_index_iterator_sentinel_range_NM(
     std::ptrdiff_t N
   , std::ptrdiff_t M
   , std::vector<double>& vA
@@ -723,13 +723,13 @@ void fill_pi_index_iterator_sentinel_range_NM(
     for (; first != last; ++first)
     {
         auto pos = *first;
-        A[pos.i + pos.j * N] = 3.14F;
+        A[pos.i + pos.j * N] = 0.0F;
     }
 }
 #endif
 
-#if defined(FILL_PI_LOOP)
-void fill_pi_loop_NN(
+#if defined(MEMSET_LOOP)
+void memset_loop_NN(
     std::ptrdiff_t N
   , double* __restrict__ A
     )
@@ -737,13 +737,13 @@ void fill_pi_loop_NN(
     BOOST_BUILTIN_ASSUME((N % 32) == 0);
     BOOST_BUILTIN_ASSUME_ALIGNED(A, 32);
 
-    BOOST_DEMAND_VECTORIZATION
     for (std::ptrdiff_t j = 0; j != N; ++j)
+        BOOST_DEMAND_VECTORIZATION
         for (std::ptrdiff_t i = 0; i != N; ++i)
-            A[i + j * N] = 3.14F;
+            A[i + j * N] = 0.0F; 
 }
 
-void fill_pi_loop_NM(
+void memset_loop_NM(
     std::ptrdiff_t N
   , std::ptrdiff_t M
   , double* __restrict__ A
@@ -753,17 +753,17 @@ void fill_pi_loop_NM(
     BOOST_BUILTIN_ASSUME((M % 32) == 0);
     BOOST_BUILTIN_ASSUME_ALIGNED(A, 32);
 
-    BOOST_DEMAND_VECTORIZATION
     for (std::ptrdiff_t j = 0; j != M; ++j)
+        BOOST_DEMAND_VECTORIZATION
         for (std::ptrdiff_t i = 0; i != N; ++i)
-            A[i + j * N] = 3.14F;
+            A[i + j * N] = 0.0F;
 }
 #endif
 
 #if defined(TEST)
 int main()
 {
-    #if defined(FILL_PI_INDEX_GENERATOR)
+    #if defined(MEMSET_INDEX_GENERATOR)
     {
         std::cout << "\nTesting index_2d_generator:\n";
 
@@ -781,7 +781,7 @@ int main()
     }
     #endif
 
-    #if defined(FILL_PI_INDEX_ITERATOR)
+    #if defined(MEMSET_INDEX_ITERATOR)
     {
         std::cout << "\nTesting index_2d_iterator_sentinel_range:\n";
 
