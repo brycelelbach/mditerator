@@ -9,12 +9,11 @@
 #define BOOST_76C43BA7_4B65_455D_AE67_59D1A1D11560
 
 #include "space.hpp"
+#include "vectorization_and_assumption_hints.hpp"
 #include "coroutine_ts_support_library.hpp"
 
 struct index_2d_generator
 {
-    using index_type = position_2d::index_type; 
-
     struct promise_type
     {
         using return_type = index_2d_generator;
@@ -42,7 +41,7 @@ struct index_2d_generator
 
         index_2d_generator get_return_object() noexcept
         {
-            return index_2d_generator{this};
+            return index_2d_generator(this);
         }
 
         constexpr void return_void() noexcept {}
@@ -85,12 +84,12 @@ struct index_2d_generator
     iterator begin()
     {
         p.resume();
-        return {p, p.done()};
+        return iterator(p, p.done());
     }
 
     constexpr iterator end()
     {
-        return {p, true};
+        return iterator(p, true);
     }
 
     static index_2d_generator generate(index_type ni, index_type nj) noexcept
@@ -99,7 +98,7 @@ struct index_2d_generator
         BOOST_ASSUME(ni > 0);
         for (index_type j = 0; j != nj; ++j)
             for (index_type i = 0; i != ni; ++i)
-                co_yield position_2d{i, j};
+                co_yield position_2d(i, j);
     }
 
     constexpr index_2d_generator(index_2d_generator&& rhs) noexcept
