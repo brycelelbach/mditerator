@@ -8,17 +8,37 @@
 #if !defined(BOOST_B107541B_3A73_495D_B9BB_F627001CF0F9)
 #define BOOST_B107541B_3A73_495D_B9BB_F627001CF0F9
 
+#include <cstddef>
+
+using index_type = std::ptrdiff_t; // Signed 4 life.
+
 struct position_2d
 {
-    using index_type = decltype("me" - "ow"); // Signed 4 life.
+    constexpr position_2d() noexcept : i(0), j(0) {}
+
+    constexpr position_2d(index_type i_, index_type j_) noexcept
+      : i(i_), j(j_)
+    {}
+
+    constexpr position_2d(position_2d const&)            noexcept = default;
+    constexpr position_2d(position_2d&&)                 noexcept = default;
+    constexpr position_2d& operator=(position_2d const&) noexcept = default;
+    constexpr position_2d& operator=(position_2d&&)      noexcept = default;
 
     index_type i; // Inner loop index.
     index_type j; // Outer loop index.
 }; 
 
-struct dimension_2d
+struct dimension
 {
-    using index_type = position_2d::index_type; 
+    constexpr dimension() noexcept : extent(0), idx(0) {}
+
+    constexpr dimension(index_type extent_, index_type idx_) noexcept
+      : extent(extent_), idx(idx_)
+    {}
+
+    constexpr dimension(dimension const&) noexcept = default;
+    constexpr dimension(dimension&&)      noexcept = default;
 
     index_type const extent;
     index_type       idx;
