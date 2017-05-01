@@ -9,21 +9,18 @@
 #define BOOST_56CF02FC_98A3_42C6_B30A_01BE4B03A259
 
 #include "space.hpp"
+#include "vectorization_and_assumption_hints.hpp"
 
 struct index_2d_iterator
 {
-    using index_type = position_2d::index_type; 
-
     struct sentinel
     {
-        using index_type = position_2d::index_type; 
-
         constexpr sentinel(index_type nj_) noexcept : nj(nj_) {}
 
         index_type nj;
     };
 
-    constexpr index_2d_iterator(dimension_2d i_, dimension_2d j_) noexcept
+    constexpr index_2d_iterator(dimension i_, dimension j_) noexcept
       : i(i_), j(j_)
     {}
 
@@ -46,6 +43,22 @@ struct index_2d_iterator
     // NOTE: ICPC requries this when we use an iterator-sentinel range.
     friend constexpr index_type operator-(
         index_2d_iterator const& l
+      , index_2d_iterator const& r
+        ) noexcept
+    {
+        BOOST_ASSUME(l.i.idx    >= 0);
+        BOOST_ASSUME(r.i.idx    >= 0);
+        BOOST_ASSUME(l.j.idx    >= 0);
+        BOOST_ASSUME(r.j.idx    >= 0);
+        BOOST_ASSUME(l.i.extent >  0);
+        BOOST_ASSUME(l.j.extent >  0);
+
+        return (l.j.idx - r.j.idx) * (l.i.extent) - (l.i.idx - r.i.idx);
+    }
+
+    // NOTE: ICPC requries this when we use an iterator-sentinel range.
+    friend constexpr index_type operator-(
+        index_2d_iterator const& l
       , sentinel r
         ) noexcept
     {
@@ -54,14 +67,19 @@ struct index_2d_iterator
         BOOST_ASSUME(l.i.extent >  0);
         BOOST_ASSUME(r.nj       >  0);
 
-        return (r.nj - l.j.idx) * (l.i.extent) - (l.i.extent - l.i.idx);
+        return (l.j.idx - r.nj) * (l.i.extent) - (l.i.idx - l.i.extent);
     }
     friend constexpr index_type operator-(
-        sentinel l
-      , index_2d_iterator const& r
+        sentinel r
+      , index_2d_iterator const& l
         ) noexcept
     {
-        return (r - l);
+        BOOST_ASSUME(l.i.idx    >= 0);
+        BOOST_ASSUME(l.j.idx    >= 0);
+        BOOST_ASSUME(l.i.extent >  0);
+        BOOST_ASSUME(r.nj       >  0);
+
+        return (r.nj - l.j.idx) * (l.i.extent) - (l.i.extent - l.i.idx);
     }
 
     // NOTE: ICPC requries this when we use an iterator-sentinel range.
@@ -76,7 +94,10 @@ struct index_2d_iterator
         return *this;
     }
 
-    constexpr position_2d operator*() const noexcept { return {i.idx, j.idx}; }
+    constexpr position_2d operator*() const noexcept
+    {
+        return position_2d(i.idx, j.idx);
+    }
 
     friend constexpr bool
     operator==(index_2d_iterator const& l, index_2d_iterator const& r) noexcept
@@ -120,19 +141,33 @@ struct index_2d_iterator
     }
 
   private:
-    dimension_2d i;
-    dimension_2d j;
+    dimension i;
+    dimension j;
 };
+
+constexpr index_2d_iterator index_2d_iterator_begin(
+    index_type ni
+  , index_type nj
+    ) noexcept
+{
+    return index_2d_iterator(dimension(ni, 0), dimension(nj, 0));
+}
+
+constexpr index_2d_iterator index_2d_iterator_end(
+    index_type ni
+  , index_type nj
+    ) noexcept
+{
+    return index_2d_iterator(dimension(ni, 0), dimension(nj, nj));
+}
 
 struct index_2d_iterator_sentinel_range
 {
-    using index_type = position_2d::index_type; 
-
     constexpr index_2d_iterator_sentinel_range(
         index_type ni
       , index_type nj
         ) noexcept
-      : first{dimension_2d{ni, 0}, dimension_2d{nj, 0}}, last{nj}
+      : first(index_2d_iterator_begin(ni, nj)), last(nj)
     {}
 
     constexpr index_2d_iterator begin() const noexcept { return first; }
