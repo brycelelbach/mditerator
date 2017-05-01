@@ -17,6 +17,8 @@ LLVMCXX=$(LLVMROOT)/bin/clang++
 INTELCXX=icpc
 GNUCXX=g++
 
+LLVMOPTREPORT=$(LLVMROOT)/bin/llvm-opt-report
+
 CXXFLAGS=
 LINKFLAGS=
 
@@ -42,13 +44,13 @@ INTELDIAGFLAGS=
 GNUDIAGFLAGS=
 
 # Optimization diagnostic report.
-define LLVMRPTFLAGS
+define LLVMREPORTFLAGS
   -Xclang -opt-record-file -Xclang $(1)
 endef
-define INTELRPTFLAGS
+define INTELREPORTFLAGS
   -qopt-report=5 -qopt-report-file=$(1) 
 endef
-define GNURPT
+define GNUREPORT
   -fopt-info-vec-all=$(1)
 endef
 
@@ -172,21 +174,34 @@ KERNELS=\
   memset_index_iterator_sentinel_range.gnu \
   memset_reference.llvm \
   memset_reference.intel \
-  memset_reference.gnu
+  memset_reference.gnu \
+  stream_triad_index_generator.llvm
 
 KERNELASMS=$(KERNELS:=.asm)
 
-KERNELRPTS=$(KERNELS:=.rpt)
+LLVMKERNELS=$(filter %.llvm,$(KERNELS))
+
+KERNELOPTIRS=$(LLVMKERNELS:=.opt.ir)
+
+KERNELUNOPTIRS=$(LLVMKERNELS:=.unopt.ir)
+
+KERNELREPORTS=$(KERNELS:=.report)
 
 DIRECTORY=$(CURDIR)/build
 
+RULER=********************************************************************************
+
 ###############################################################################
 
-RULER=********************************************************************************
+all: $(TESTS) kernel-asms kernel-opt-irs kernel-unopt-irs kernel-reports
 
 kernel-asms: $(KERNELASMS)
 
-all: $(TESTS) kernel-asms
+kernel-opt-irs: $(KERNELOPTIRS)
+
+kernel-unopt-irs: $(KERNELUNOPTIRS)
+
+kernel-reports: $(KERNELREPORTS)
 
 directory: $(DIRECTORY)/
 
@@ -195,7 +210,7 @@ clean:
 	@rm -f $(DIRECTORY)/*
 	@if [ -d "$(DIRECTORY)" ]; then rmdir $(DIRECTORY); fi
 
-.PHONY: directory kernel-asms clean
+.PHONY: directory kernel-asms kernel-opt-irs kernel-unopt-irs kernel-reports clean
 
 %.llvm : %.cpp directory
 	@echo "$(RULER)" 
@@ -243,19 +258,44 @@ clean:
 	@echo "$(RULER)"
 	@echo
 
-#$(call LLVMRPTFLAGS,$(CURDIR)/build/$(*F).llvm.rpt) 
 
-#%.asm : %.cpp directory
-#	@echo "********************************************************************************"
-#	@echo "Generating assembly for $(*F)"
-#	$(CXX) $(MKLFLAGS) $(CXXFLAGS) $(ASMFLAGS) -S $< -o $(CURDIR)/build/$(*F).asm
-#	@echo "********************************************************************************"
-#	@echo "Generating LLVM IR for $(*F)"
-#	$(CXX) $(MKLFLAGS) $(CXXFLAGS) $(ASMFLAGS) -emit-llvm -S $< -o $(CURDIR)/build/$(*F).ir 
-#	@echo "Generating optimization report for $(*F)"
-#	$(CXX) $(MKLFLAGS) $(CXXFLAGS) $(OPTREPORTFLAGS) $< -o $(CURDIR)/build/$(*F) $(LINKFLAGS)
-#	@echo "********************************************************************************"
-#	@echo
+%.llvm.opt.ir : %.cpp directory
+	@echo "$(RULER)" 
+	@echo "Generating optimized IR for $(*F).llvm"
+	$(LLVMCXX) $(CXXFLAGS) $(LLVMCXXFLAGS) $(LLVMDIAGFLAGS) $(LLVMOPTIRFLAGS) -S $< -o $(CURDIR)/build/$(*F).llvm.opt.ir
+	@echo "$(RULER)"
+	@echo
+
+%.llvm.unopt.ir : %.cpp directory
+	@echo "$(RULER)" 
+	@echo "Generating unoptimized IR for $(*F).llvm"
+	$(LLVMCXX) $(CXXFLAGS) $(LLVMCXXFLAGS) $(LLVMDIAGFLAGS) $(LLVMUNOPTIRFLAGS) -S $< -o $(CURDIR)/build/$(*F).llvm.opt.ir
+	@echo "$(RULER)"
+	@echo
+
+
+%.llvm.report : %.cpp directory
+	@echo "$(RULER)" 
+	@echo "Generating optimization report for $(*F).llvm"
+	$(LLVMCXX) $(CXXFLAGS) $(LLVMCXXFLAGS) $(LLVMDIAGFLAGS) $(LLVMASMFLAGS) $(call LLVMREPORTFLAGS,$(CURDIR)/build/$(*F).llvm.yaml) -c $< -o /dev/null 
+	$(LLVMOPTREPORT) -r $(CURDIR) -o $(CURDIR)/build/$(*F).llvm.report $(CURDIR)/build/$(*F).llvm.yaml
+	@echo "$(RULER)"
+	@echo
+
+%.intel.report : %.cpp directory
+	@echo "$(RULER)" 
+	@echo "Generating optimization report for $(*F).intel"
+	$(INTELCXX) $(CXXFLAGS) $(INTELCXXFLAGS) $(INTELDIAGFLAGS) $(INTELASMFLAGS) $(call INTELREPORTFLAGS,$(CURDIR)/build/$(*F).intel.report) -c $< -o /dev/null 
+	@echo "$(RULER)"
+	@echo
+
+%.gnu.report : %.cpp directory
+	@echo "$(RULER)" 
+	@echo "Generating optimization report for $(*F).gnu"
+	$(GNUCXX) $(CXXFLAGS) $(GNUCXXFLAGS) $(GNUDIAGFLAGS) $(GNUASMFLAGS) $(call GNUREPORTFLAGS,$(CURDIR)/build/$(*F).gnu.report) -c $< -o /dev/null
+	@echo "$(RULER)"
+	@echo
+
 
 $(DIRECTORY)/:
 	@mkdir -p $@ 
