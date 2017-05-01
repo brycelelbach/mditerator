@@ -42,6 +42,26 @@
         /**/
 #endif
 
+// BOOST_PREVENT_VECTORIZATION - Tell the compiler to not vectorize a loop. 
+// Usage:
+//
+// BOOST_PREVENT_VECTORIZATION for (/* ... */) { /* ... */ }
+//
+// NOTE: Unlike Clang and Intel, GCC doesn't seem to have a way to do this. 
+#if   defined(__INTEL_COMPILER)
+    #define BOOST_PREVENT_VECTORIZATION                                        \
+        BOOST_PRAGMA(novector)                                                 \
+        /**/
+#elif defined(__clang__)
+    #define BOOST_PREVENT_VECTORIZATION                                        \
+        BOOST_PRAGMA(clang loop vectorize(disable) interleave(disable))        \
+        /**/
+#else
+    #define BOOST_PREVENT_VECTORIZATION                                        \
+                                                                               \
+        /**/
+#endif
+
 // Sometimes it is nice to check that our brash and bold claims are, in fact,
 // correct. Defining BOOST_CHECK_ASSUMPTIONS does that (e.g. assumption will be
 // asserted before they are assumed).
