@@ -5,8 +5,8 @@
 #include "index_iterator.hpp"
 
 void memset_index_iterator_pair(
-    std::ptrdiff_t N
-  , std::ptrdiff_t M
+    index_type N
+  , index_type M
   , std::vector<double>& vA
     )
 {

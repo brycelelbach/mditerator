@@ -5,8 +5,8 @@
 #include "index_generator.hpp"
 
 void memset_index_generator(
-    std::ptrdiff_t N
-  , std::ptrdiff_t M
+    index_type N
+  , index_type M
   , std::vector<double>& vA
     )
 {
