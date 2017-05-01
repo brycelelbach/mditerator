@@ -175,7 +175,16 @@ KERNELS=\
   memset_reference.llvm \
   memset_reference.intel \
   memset_reference.gnu \
-  stream_triad_index_generator.llvm
+  stream_triad_index_generator.llvm \
+  stream_triad_reference.llvm \
+  stream_triad_reference.intel \
+  stream_triad_reference.gnu \
+  matrix_multiply_reference.llvm \
+  matrix_multiply_reference.intel \
+  matrix_multiply_reference.gnu \
+  stencil_3d_7point_reference.llvm \
+  stencil_3d_7point_reference.intel \
+  stencil_3d_7point_reference.gnu
 
 KERNELASMS=$(KERNELS:=.asm)
 
