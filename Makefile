@@ -278,7 +278,7 @@ clean:
 %.llvm.unopt.ir : %.cpp directory
 	@echo "$(RULER)" 
 	@echo "Generating unoptimized IR for $(*F).llvm"
-	$(LLVMCXX) $(CXXFLAGS) $(LLVMCXXFLAGS) $(LLVMDIAGFLAGS) $(LLVMUNOPTIRFLAGS) -S $< -o $(CURDIR)/build/$(*F).llvm.opt.ir
+	$(LLVMCXX) $(CXXFLAGS) $(LLVMCXXFLAGS) $(LLVMDIAGFLAGS) $(LLVMUNOPTIRFLAGS) -S $< -o $(CURDIR)/build/$(*F).llvm.unopt.ir
 	@echo "$(RULER)"
 	@echo
 

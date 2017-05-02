@@ -13,7 +13,7 @@ int main()
     std::vector<std::string> d = {"a00", "a10", "a01", "a11", "a02", "a12"};
 
     BOOST_PREVENT_VECTORIZATION
-    for (auto pos : index_2d_generator::generate(2, 3))
+    for (auto pos : generate_indices(2, 3))
     {
         std::cout << "(" << pos[0] << " " << pos[1] << ") : "
                   << d[pos[0] + pos[1] * 2]

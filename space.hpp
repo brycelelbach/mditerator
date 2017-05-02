@@ -18,13 +18,13 @@ struct position
 {
     constexpr position() noexcept : idxs{{}} {}
 
-    template <typename... Idxs>
-    constexpr position(Idxs... idxs_) noexcept
+    template <typename... Indices>
+    constexpr position(Indices... idxs_) noexcept
       : idxs{{static_cast<index_type>(idxs_)...}}
     {
         static_assert(
-            sizeof...(Idxs) == N
-          , "Insufficient index parameters to constructor."
+            sizeof...(Indices) == N
+          , "Insufficient index parameters passed to constructor."
         );
     }
 

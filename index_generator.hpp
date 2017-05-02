@@ -12,15 +12,18 @@
 #include "vectorization_and_assumption_hints.hpp"
 #include "coroutine_ts_support_library.hpp"
 
-struct index_2d_generator
+template <std::size_t N>
+struct index_generator
 {
+    static_assert(N != 0, "N must be greater than 0.");
+
     struct promise_type
     {
-        using return_type = index_2d_generator;
+        using return_type = index_generator;
 
-        position<2> pos;
+        position<N> pos;
 
-        constexpr std::experimental::suspend_always yield_value(position<2> pos_)
+        constexpr std::experimental::suspend_always yield_value(position<N> pos_)
             noexcept
         {
             pos = pos_;
@@ -39,9 +42,9 @@ struct index_2d_generator
             return {};
         }
 
-        index_2d_generator get_return_object() noexcept
+        index_generator get_return_object() noexcept
         {
-            return index_2d_generator(this);
+            return index_generator(this);
         }
 
         constexpr void return_void() noexcept {}
@@ -66,7 +69,7 @@ struct index_2d_generator
             return *this;
         }
 
-        position<2> operator*() const
+        position<N> operator*() const
         {
             return coro.promise().pos;
         }
@@ -92,33 +95,60 @@ struct index_2d_generator
         return iterator(p, true);
     }
 
-    static index_2d_generator generate(index_type ni, index_type nj) noexcept
-    {
-        BOOST_ASSUME(nj > 0);
-        BOOST_ASSUME(ni > 0);
-        for (index_type j = 0; j != nj; ++j)
-            for (index_type i = 0; i != ni; ++i)
-                co_yield position<2>(i, j);
-    }
-
-    constexpr index_2d_generator(index_2d_generator&& rhs) noexcept
+    constexpr index_generator(index_generator&& rhs) noexcept
       : p(rhs.p)
     {
         rhs.p = nullptr;
     }
 
-    ~index_2d_generator()
+    ~index_generator()
     {
         if (p) p.destroy();
     }
 
   private:
-    explicit index_2d_generator(promise_type* p) noexcept
+    explicit index_generator(promise_type* p) noexcept
       : p(std::experimental::coroutine_handle<promise_type>::from_promise(*p))
     {}
 
     std::experimental::coroutine_handle<promise_type> p;
 };
+
+static index_generator<1> generate_indices(
+    index_type ni
+    ) noexcept
+{
+    BOOST_ASSUME(ni > 0);
+    for (index_type i = 0; i != ni; ++i)
+        co_yield position<1>(i);
+}
+
+static index_generator<2> generate_indices(
+    index_type ni
+  , index_type nj
+    ) noexcept
+{
+    BOOST_ASSUME(nj > 0);
+    BOOST_ASSUME(ni > 0);
+    for (index_type j = 0; j != nj; ++j)
+        for (index_type i = 0; i != ni; ++i)
+            co_yield position<2>(i, j);
+}
+
+static index_generator<3> generate_indices(
+    index_type ni
+  , index_type nj
+  , index_type nk
+    ) noexcept
+{
+    BOOST_ASSUME(nk > 0);
+    BOOST_ASSUME(nj > 0);
+    BOOST_ASSUME(ni > 0);
+    for (index_type k = 0; k != nk; ++k)
+        for (index_type j = 0; j != nj; ++j)
+            for (index_type i = 0; i != ni; ++i)
+                co_yield position<3>(i, j, k);
+}
 
 #endif // BOOST_76C43BA7_4B65_455D_AE67_59D1A1D11560
 
