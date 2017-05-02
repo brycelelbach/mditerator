@@ -8,25 +8,41 @@
 #if !defined(BOOST_B107541B_3A73_495D_B9BB_F627001CF0F9)
 #define BOOST_B107541B_3A73_495D_B9BB_F627001CF0F9
 
+#include <array>
 #include <cstddef>
 
 using index_type = std::ptrdiff_t; // Signed 4 life.
 
-struct position_2d
+template <std::size_t N>
+struct position
 {
-    constexpr position_2d() noexcept : i(0), j(0) {}
+    constexpr position() noexcept : idxs{{}} {}
 
-    constexpr position_2d(index_type i_, index_type j_) noexcept
-      : i(i_), j(j_)
-    {}
+    template <typename... Idxs>
+    constexpr position(Idxs... idxs_) noexcept
+      : idxs{{static_cast<index_type>(idxs_)...}}
+    {
+        static_assert(
+            sizeof...(Idxs) == N
+          , "Insufficient index parameters to constructor."
+        );
+    }
 
-    constexpr position_2d(position_2d const&)            noexcept = default;
-    constexpr position_2d(position_2d&&)                 noexcept = default;
-    constexpr position_2d& operator=(position_2d const&) noexcept = default;
-    constexpr position_2d& operator=(position_2d&&)      noexcept = default;
+    constexpr position(position const&)            noexcept = default;
+    constexpr position(position&&)                 noexcept = default;
+    constexpr position& operator=(position const&) noexcept = default;
+    constexpr position& operator=(position&&)      noexcept = default;
 
-    index_type i; // Inner loop index.
-    index_type j; // Outer loop index.
+    constexpr index_type& operator[](index_type i) noexcept
+    {
+        return idxs[i];
+    }
+    constexpr index_type const& operator[](index_type i) const noexcept
+    {
+        return idxs[i];
+    }
+
+    std::array<index_type, N> idxs;
 }; 
 
 struct dimension

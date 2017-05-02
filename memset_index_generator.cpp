@@ -18,6 +18,6 @@ void memset_index_generator(
 
     BOOST_DEMAND_VECTORIZATION
     for (auto pos : index_2d_generator::generate(N, M))
-        A[pos.i + pos.j * N] = 0.0F;
+        A[pos[0] + pos[1] * N] = 0.0F;
 }
 

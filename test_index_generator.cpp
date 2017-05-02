@@ -15,8 +15,8 @@ int main()
     BOOST_PREVENT_VECTORIZATION
     for (auto pos : index_2d_generator::generate(2, 3))
     {
-        std::cout << "(" << pos.i << " " << pos.j << ") : "
-                  << d[pos.i + pos.j * 2]
+        std::cout << "(" << pos[0] << " " << pos[1] << ") : "
+                  << d[pos[0] + pos[1] * 2]
                   << std::endl;
     }
 }

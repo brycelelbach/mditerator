@@ -94,9 +94,9 @@ struct index_2d_iterator
         return *this;
     }
 
-    constexpr position_2d operator*() const noexcept
+    constexpr position<2> operator*() const noexcept
     {
-        return position_2d(i.idx, j.idx);
+        return position<2>(i.idx, j.idx);
     }
 
     friend constexpr bool

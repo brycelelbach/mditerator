@@ -23,7 +23,7 @@ void memset_index_iterator_pair(
     for (; first != last; ++first)
     {
         auto pos = *first;
-        A[pos.i + pos.j * N] = 0.0F;
+        A[pos[0] + pos[1] * N] = 0.0F;
     }
 }
 

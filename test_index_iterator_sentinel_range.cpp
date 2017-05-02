@@ -21,8 +21,8 @@ int main()
     for (; first != last; ++first)
     {
         auto pos = *first;
-        std::cout << "(" << pos.i << " " << pos.j << ") : "
-                  << d[pos.i + pos.j * 2]
+        std::cout << "(" << pos[0] << " " << pos[1] << ") : "
+                  << d[pos[0] + pos[1] * 2]
                   << "\n";
     }
 }

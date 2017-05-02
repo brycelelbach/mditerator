@@ -25,6 +25,7 @@ void stream_triad_index_generator(
 
     BOOST_DEMAND_VECTORIZATION
     for (auto pos : index_2d_generator::generate(N, M))
-        A[pos.i + pos.j * N] = B[pos.i + pos.j * N] + q * C[pos.i + pos.j * N];
+        A[pos[0] + pos[1] * N] =     B[pos[0] + pos[1] * N]
+                               + q * C[pos[0] + pos[1] * N];
 }
 

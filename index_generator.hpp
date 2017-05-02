@@ -18,9 +18,9 @@ struct index_2d_generator
     {
         using return_type = index_2d_generator;
 
-        position_2d pos;
+        position<2> pos;
 
-        constexpr std::experimental::suspend_always yield_value(position_2d pos_)
+        constexpr std::experimental::suspend_always yield_value(position<2> pos_)
             noexcept
         {
             pos = pos_;
@@ -66,7 +66,7 @@ struct index_2d_generator
             return *this;
         }
 
-        position_2d operator*() const
+        position<2> operator*() const
         {
             return coro.promise().pos;
         }
@@ -98,7 +98,7 @@ struct index_2d_generator
         BOOST_ASSUME(ni > 0);
         for (index_type j = 0; j != nj; ++j)
             for (index_type i = 0; i != ni; ++i)
-                co_yield position_2d(i, j);
+                co_yield position<2>(i, j);
     }
 
     constexpr index_2d_generator(index_2d_generator&& rhs) noexcept
