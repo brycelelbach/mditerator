@@ -10,7 +10,6 @@
 void stencil_3d_7point_index_generator(
     index_type                 N
   , index_type                 M
-  , index_type                 P
   , std::vector<double> const& vA
   , std::vector<double>&       vB
   , double                     c0
@@ -22,25 +21,21 @@ void stencil_3d_7point_index_generator(
 
     BOOST_ASSUME((N % 32) == 0);
     BOOST_ASSUME((M % 32) == 0);
-    BOOST_ASSUME((P % 32) == 0);
     BOOST_ASSUME_ALIGNED(A, 32);
     BOOST_ASSUME_ALIGNED(B, 32);
 
     BOOST_DEMAND_VECTORIZATION
-    for (auto pos : generate_indices({1, N - 1}, {1, M - 1}, {1, P - 1}))
+    for (auto pos : generate_indices({1, N - 1}, {1, M - 1}))
     {
         index_type const i = pos[0];
         index_type const j = pos[1];
-        index_type const k = pos[2];
-        B[(i) + (j) * N + (k) * N * M]
-            = c0 * A[(i)     + (j)     * N + (k)     * N * M]
+        B[(i) + (j) * N]
+            = c0 * A[(i)     + (j)     * N]
             + c1 * (
-                   A[(i - 1) + (j)     * N + (k)     * N * M]
-                 + A[(i + 1) + (j)     * N + (k)     * N * M]
-                 + A[(i)     + (j - 1) * N + (k)     * N * M]
-                 + A[(i)     + (j + 1) * N + (k)     * N * M]
-                 + A[(i)     + (j)     * N + (k - 1) * N * M]
-                 + A[(i)     + (j)     * N + (k + 1) * N * M]
+                   A[(i - 1) + (j)     * N]
+                 + A[(i + 1) + (j)     * N]
+                 + A[(i)     + (j - 1) * N]
+                 + A[(i)     + (j + 1) * N]
                    );
     }
 }

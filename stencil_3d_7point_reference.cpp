@@ -23,11 +23,11 @@ void stencil_3d_7point_reference(
     BOOST_ASSUME_ALIGNED(B, 32);
 
     BOOST_DEMAND_VECTORIZATION
-    for (index_type k = 0; k != P; ++k)
+    for (index_type k = 1; k != P - 1; ++k)
         BOOST_DEMAND_VECTORIZATION
-        for (index_type j = 0; j != M; ++j)
+        for (index_type j = 1; j != M - 1; ++j)
             BOOST_DEMAND_VECTORIZATION
-            for (index_type i = 0; i != N; ++i)
+            for (index_type i = 1; i != N - 1; ++i)
                 B[(i) + (j) * N + (k) * N * M]
                     = c0 * A[(i)     + (j)     * N + (k)     * N * M]
                     + c1 * (
