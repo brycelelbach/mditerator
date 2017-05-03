@@ -175,6 +175,10 @@ KERNELS=\
   memset_2d_reference.llvm \
   memset_2d_reference.intel \
   memset_2d_reference.gnu \
+  memset_3d_index_generator.llvm \
+  memset_3d_reference.llvm \
+  memset_3d_reference.intel \
+  memset_3d_reference.gnu \
   stream_triad_index_generator.llvm \
   stream_triad_reference.llvm \
   stream_triad_reference.intel \
