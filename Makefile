@@ -182,6 +182,7 @@ KERNELS=\
   matrix_multiply_reference.llvm \
   matrix_multiply_reference.intel \
   matrix_multiply_reference.gnu \
+  stencil_3d_7point_index_generator.llvm \
   stencil_3d_7point_reference.llvm \
   stencil_3d_7point_reference.intel \
   stencil_3d_7point_reference.gnu
