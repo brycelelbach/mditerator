@@ -23,7 +23,7 @@ CXXFLAGS=
 LINKFLAGS=
 
 # Warnings.
-CXXFLAGS=-Wall
+CXXFLAGS=-Wall -Wno-unused
 
 # Language and library dialect.
 LLVMCXXFLAGS=-stdlib=libc++ -std=c++1z -fcoroutines-ts
