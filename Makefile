@@ -165,16 +165,16 @@ TESTS=\
   test_index_iterator_sentinel_range.gnu
 
 KERNELS=\
-  memset_index_generator.llvm \
-  memset_index_iterator_pair.llvm \
-  memset_index_iterator_pair.intel \
-  memset_index_iterator_pair.gnu \
-  memset_index_iterator_sentinel_range.llvm \
-  memset_index_iterator_sentinel_range.intel \
-  memset_index_iterator_sentinel_range.gnu \
-  memset_reference.llvm \
-  memset_reference.intel \
-  memset_reference.gnu \
+  memset_2d_index_generator.llvm \
+  memset_2d_index_iterator_pair.llvm \
+  memset_2d_index_iterator_pair.intel \
+  memset_2d_index_iterator_pair.gnu \
+  memset_2d_index_iterator_sentinel_range.llvm \
+  memset_2d_index_iterator_sentinel_range.intel \
+  memset_2d_index_iterator_sentinel_range.gnu \
+  memset_2d_reference.llvm \
+  memset_2d_reference.intel \
+  memset_2d_reference.gnu \
   stream_triad_index_generator.llvm \
   stream_triad_reference.llvm \
   stream_triad_reference.intel \

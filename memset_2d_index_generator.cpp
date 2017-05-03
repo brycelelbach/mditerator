@@ -4,7 +4,7 @@
 #include "vectorization_and_assumption_hints.hpp"
 #include "index_generator.hpp"
 
-void memset_index_generator(
+void memset_2d_index_generator(
     index_type N
   , index_type M
   , std::vector<double>& vA
