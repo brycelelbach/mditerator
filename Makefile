@@ -183,6 +183,7 @@ KERNELS=\
   stream_triad_reference.llvm \
   stream_triad_reference.intel \
   stream_triad_reference.gnu \
+  matrix_multiply_index_generator.llvm \
   matrix_multiply_reference.llvm \
   matrix_multiply_reference.intel \
   matrix_multiply_reference.gnu \
