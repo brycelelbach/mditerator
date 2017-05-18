@@ -114,6 +114,66 @@ struct index_generator
     std::experimental::coroutine_handle<promise_type> p;
 };
 
+template <
+    std::size_t N
+  , std::size_t I
+  , typename... Indices
+  , std::enable_if_t<I != 0>* = nullptr
+>
+static index_generator<N> generate_indices_impl(
+    std::integral_constant<std::size_t, I>
+  , position<N> pos
+  , Indices... idxs
+    ) noexcept
+{
+    index_type const ni = pos[I];
+    BOOST_ASSUME(ni > 0);
+    for (index_type i = 0; i != ni; ++i)
+    {
+        auto g = generate_indices_impl<N>(
+            std::integral_constant<std::size_t, I - 1>{}
+          , pos
+          , i
+          , idxs...
+        );
+
+        for (auto pos : g)
+            co_yield pos;
+    }
+}
+
+template <
+    std::size_t N
+  , std::size_t I
+  , typename... Indices
+  , std::enable_if_t<I == 0>* = nullptr
+>
+static index_generator<N> generate_indices_impl(
+    std::integral_constant<std::size_t, I>
+  , position<N> pos
+  , Indices... idxs
+    ) noexcept
+{
+    index_type const ni = pos[I];
+    BOOST_ASSUME(ni > 0);
+    for (index_type i = 0; i != ni; ++i)
+    {
+        co_yield position<N>(i, idxs...);
+    }
+}
+
+    
+template <typename... Extents>
+inline static index_generator<sizeof...(Extents)>
+generate_indices(Extents... exts) noexcept
+{
+    return generate_indices_impl<sizeof...(Extents)>(
+        std::integral_constant<std::size_t, sizeof...(Extents) - 1>{}
+      , position<sizeof...(Extents)>(exts...)
+    );
+}
+
+/*
 inline static index_generator<1> generate_indices(
     position<2> ni
     ) noexcept
@@ -332,6 +392,7 @@ inline static index_generator<6> generate_indices(
 {
     return generate_indices({0, ni}, {0, nj}, {0, nk}, {0, nl}, {0, nm}, {0, nn});
 }
+*/
 
 #endif // BOOST_76C43BA7_4B65_455D_AE67_59D1A1D11560
 
