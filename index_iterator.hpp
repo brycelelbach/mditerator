@@ -40,7 +40,7 @@ struct index_2d_iterator
         return *this;
     }
 
-    // NOTE: ICPC requries this when we use an iterator-sentinel range.
+    // NOTE: ICPC requires this when we use an iterator-sentinel range.
     friend constexpr index_type operator-(
         index_2d_iterator const& l
       , index_2d_iterator const& r
@@ -56,7 +56,7 @@ struct index_2d_iterator
         return (l.j.idx - r.j.idx) * (l.i.extent) - (l.i.idx - r.i.idx);
     }
 
-    // NOTE: ICPC requries this when we use an iterator-sentinel range.
+    // NOTE: ICPC requires this when we use an iterator-sentinel range.
     friend constexpr index_type operator-(
         index_2d_iterator const& l
       , sentinel r
@@ -82,7 +82,7 @@ struct index_2d_iterator
         return (r.nj - l.j.idx) * (l.i.extent) - (l.i.extent - l.i.idx);
     }
 
-    // NOTE: ICPC requries this when we use an iterator-sentinel range.
+    // NOTE: ICPC requires this when we use an iterator-sentinel range.
     constexpr index_2d_iterator& operator+=(
         index_type d
         ) noexcept
